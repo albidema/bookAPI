@@ -138,7 +138,7 @@ namespace BookAPI.Controllers
             _context.Book.Remove(book);
             await _context.SaveChangesAsync();
 
-            return book;
+            return Ok();
         }
 
         private bool BookExists(int id)
