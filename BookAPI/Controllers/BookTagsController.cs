@@ -28,17 +28,17 @@ namespace BookAPI.Controllers
         }
 
         // GET: api/BookTags/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<BookTag>> GetBookTag(int id)
+        [HttpGet("{bookId}")]
+        public async Task<ActionResult<BookTag>> GetBookTag(int bookId)
         {
-            var bookTag = await _context.BookTag.FindAsync(id);
+            var bookTag = await _context.BookTag.Where(x => x.BookId == bookId).Select( x => new Tag { Id = x.TagId, Name = x.Tag.Name } ).ToListAsync();
 
             if (bookTag == null)
             {
                 return NotFound();
             }
 
-            return bookTag;
+            return Ok(bookTag);
         }
 
         // PUT: api/BookTags/5

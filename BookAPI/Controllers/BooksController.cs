@@ -45,12 +45,35 @@ namespace BookAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBook(int id, Book book)
         {
+            
             if (id != book.Id)
             {
                 return BadRequest();
             }
 
             _context.Entry(book).State = EntityState.Modified;
+
+            var tagsToRemove = _context.BookTag.Where(x => x.BookId == id);
+
+            if (tagsToRemove.Count() > 0)
+            {
+                _context.BookTag.RemoveRange(tagsToRemove);
+                _context.SaveChanges();
+            }
+
+            if (book.BookTag.Count > 0)
+            {
+                var bookTags = new HashSet<BookTag>();
+                foreach (var bt in book.BookTag)
+                {
+                    bookTags.Add(new BookTag
+                    {
+                        BookId = id,
+                        TagId = bt.TagId
+                    });
+                }
+                _context.BookTag.AddRange(bookTags);
+            }
 
             try
             {
@@ -75,10 +98,31 @@ namespace BookAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(Book book)
         {
-            _context.Book.Add(book);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+            //if (book.BookTag.Count > 0)
+            //{
+            //    var bookTags = new HashSet<BookTag>();
+            //    foreach (var bt in book.BookTag)
+            //    {
+            //        bookTags.Add(new BookTag
+            //        {
+            //            BookId = book.Id,
+            //            TagId = bt.Id
+            //        });
+            //    }
+            //    _context.BookTag.AddRange(bookTags);
+            //}
+
+            //await _context.SaveChangesAsync();
+            try {
+                _context.Book.Add(book);
+
+                await _context.SaveChangesAsync();
+            }
+            catch { }
+            
+
+            return NoContent();
         }
 
         // DELETE: api/Books/5
