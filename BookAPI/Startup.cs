@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using BookAPI.Models;
+using Nancy.Owin;
 
 namespace BookAPI
 {
@@ -33,10 +34,11 @@ namespace BookAPI
                     builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
             services.AddDbContext<BookAPIContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("BookAPIContext")));
+
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,7 +56,8 @@ namespace BookAPI
 
             app.UseHttpsRedirection();
             app.UseCors("AllowOrigin");
-            app.UseMvc();
+            app.UseOwin(x => x.UseNancy());
+            //app.UseMvc();
         }
     }
 }

@@ -99,21 +99,6 @@ namespace BookAPI.Controllers
         public async Task<ActionResult<Book>> PostBook(Book book)
         {
 
-            //if (book.BookTag.Count > 0)
-            //{
-            //    var bookTags = new HashSet<BookTag>();
-            //    foreach (var bt in book.BookTag)
-            //    {
-            //        bookTags.Add(new BookTag
-            //        {
-            //            BookId = book.Id,
-            //            TagId = bt.Id
-            //        });
-            //    }
-            //    _context.BookTag.AddRange(bookTags);
-            //}
-
-            //await _context.SaveChangesAsync();
             try {
                 _context.Book.Add(book);
 
