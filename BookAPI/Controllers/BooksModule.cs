@@ -26,6 +26,12 @@ namespace BookAPI.Controllers
             {
                 int bookId = args.id;
                 var model = _appContext.Book.Where(x => x.Id == bookId).FirstOrDefault();
+
+                if (model == null)
+                {
+                    return 404;
+                }
+                   
                 return model;
             });
 
@@ -33,14 +39,29 @@ namespace BookAPI.Controllers
 
                 int id = args.id;
                 var book = _appContext.Book.Where( x => x.Id == id).FirstOrDefault();
+
                 if (book == null)
                 {
                     return 404;
                 }
 
                 _appContext.Book.Remove(book);
-                _appContext.SaveChangesAsync();
 
+                try {
+                    _appContext.SaveChanges();
+                    
+                }
+                catch {
+                    if (!BookExists(id))
+                    {
+                        return 404;
+                    }
+                    else
+                    {
+                        return 400;
+                    }
+                }
+                
                 return 200;
             });
 
@@ -55,7 +76,9 @@ namespace BookAPI.Controllers
 
                      _appContext.SaveChanges();
                 }
-                catch { }
+                catch {
+                    return 400;
+                }
 
 
                 return 201;
@@ -108,7 +131,7 @@ namespace BookAPI.Controllers
                     }
                     else
                     {
-                        throw;
+                        return 400;
                     }
                 }
 
